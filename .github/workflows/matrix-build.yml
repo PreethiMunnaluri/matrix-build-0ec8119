@@ -1,0 +1,38 @@
+name: Matrix Build - 0ec8119
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]  # three variants
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: matrix-0ec8119
+        run: echo "Building for Node.js version ${{ matrix.node-version }}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Generate build artifact
+        run: |
+          ART=build_output_${{ matrix.node-version }}.txt
+          echo "Build output for Node.js version ${{ matrix.node-version }}" > $ART
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> $ART
+          echo "Matrix identifier: matrix-0ec8119" >> $ART
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-0ec8119-v${{ matrix.node-version }}
+          path: build_output_${{ matrix.node-version }}.txt
